@@ -1,0 +1,42 @@
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import java.net.URL?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.PasswordField?>
+
+<?import javafx.scene.layout.VBox?>
+<BorderPane fx:controller="client.Controller"
+            xmlns:fx="http://javafx.com/fxml">
+
+    <stylesheets>
+        <URL value="@/css/style.css"/>
+    </stylesheets>
+
+    <top>
+    </top>
+    <center>
+        <HBox>
+            <TextArea styleClass="textArea" prefHeight="500" prefWidth="200" editable="false"/>
+            <TextArea styleClass="textArea" fx:id="textArea" prefWidth="500" editable="false"/>
+        </HBox>
+    </center>
+    <bottom>
+        <VBox>
+            <HBox fx:id="authPanel">
+                <TextField  styleClass="bottomPadding" fx:id="loginField" HBox.hgrow="ALWAYS" promptText="login"/>
+                <PasswordField styleClass="bottomPadding" fx:id="passwordField"
+                               HBox.hgrow="ALWAYS" promptText="password" onAction="#tryToAuth"/>
+                <Button styleClass="bottomPadding" text="login" onAction="#tryToAuth" minWidth="100"/>
+            </HBox>
+            <HBox fx:id="msgPanel" visible="false" managed="false">
+                <TextField styleClass="bottomPadding" fx:id="textField" promptText="Введите сообщение" prefWidth="550"
+                           onAction="#btnSend"/>
+                <Button styleClass="bottomPadding" fx:id="buttonSendMessage" text="Send" prefWidth="150"
+                        onAction="#btnSend"/>
+            </HBox>
+        </VBox>
+
+    </bottom>
+</BorderPane>
