@@ -25,7 +25,7 @@
     <bottom>
         <VBox>
             <HBox fx:id="authPanel">
-                <TextField  styleClass="bottomPadding" fx:id="loginField" HBox.hgrow="ALWAYS" promptText="login"/>
+                <TextField styleClass="bottomPadding" fx:id="loginField" HBox.hgrow="ALWAYS" promptText="login"/>
                 <PasswordField styleClass="bottomPadding" fx:id="passwordField"
                                HBox.hgrow="ALWAYS" promptText="password" onAction="#tryToAuth"/>
                 <Button styleClass="bottomPadding" text="login" onAction="#tryToAuth" minWidth="100"/>

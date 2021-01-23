@@ -1,5 +1,7 @@
 package server;
 
+import commands.Command;
+
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -43,14 +45,16 @@ public class Server {
         for (ClientHandler c : clients) {
             if (!msg.startsWith("/")) {
                 c.sendMsg(message);
-            } else if (msg.startsWith("/w "+ c.getNickname()) ||
-                    c.getNickname().equals(clientHandler.getNickname())){
+            } else if (msg.startsWith(Command.PRIVATE_MESSAGE + " " + c.getNickname()) ||
+                    c.getNickname().equals(clientHandler.getNickname())) {
                 String[] prMsg = msg.split("\\s", 3);
                 String privateMassage;
-                if (prMsg.length > 2){
-                   privateMassage = String.format("[ %s ]: %s", clientHandler.getNickname(), prMsg[2]);
+                if (prMsg.length > 2) {
+                    privateMassage = String.format("[ %s ]: %s", clientHandler.getNickname(), prMsg[2]);
                     c.sendMsg(privateMassage);
                 }
+            } else {
+                c.sendMsg(message);
             }
         }
     }
