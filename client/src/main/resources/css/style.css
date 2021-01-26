@@ -1,0 +1,31 @@
+.root {
+    -fx-background-color: linear-gradient(to right top, #200e48, #2a1b64, #312a81, #3439a1, #314ac2, #4155d0,
+     #5160df, #5f6cee, #7b74ec, #917eeb, #a387ea, #b392e9);
+}
+
+.textArea {
+    -fx-padding: 10px;
+    -fx-border-insets: 10px;
+    -fx-background-insets: 10px;
+    -fx-background-color: #CCAEFF;
+    -fx-control-inner-background: #CCAEFF;
+    -fx-text-fill: #000000;
+}
+
+#textArea {
+    -fx-font-size: 18px;
+    -fx-font-style: italic;
+}
+
+.bottomPadding{
+    -fx-padding: 10px;
+    -fx-border-insets:10px;
+    -fx-background-insets: 10px;
+    -fx-background-color:#CCAEFF;
+    -fx-text-fill: #000000;
+    -fx-prompt-text-fill: #000000;
+}
+
+#buttonSendMessage: hover {
+    -fx-background-color:#9677CA;
+}
