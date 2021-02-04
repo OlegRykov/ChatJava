@@ -143,8 +143,8 @@ public class ClientHandler {
         return login;
     }
 
-    public void addClientHistory(String login){
-        File file = new File("userHistory/history_" + login +".txt");
+    public void addClientHistory(String login) {
+        File file = new File("userHistory/history_" + login + ".txt");
         try {
             file.createNewFile();
         } catch (IOException e) {
@@ -153,9 +153,9 @@ public class ClientHandler {
     }
 
 
-    public void writeHistory(String msg){
+    public void writeHistory(String msg) {
         try {
-            FileWriter fileWriter = new FileWriter("userHistory/history_" + login +".txt", true);
+            FileWriter fileWriter = new FileWriter("userHistory/history_" + login + ".txt", true);
             fileWriter.write(msg + "\n");
             fileWriter.close();
         } catch (IOException e) {
@@ -163,20 +163,20 @@ public class ClientHandler {
         }
     }
 
-    public void readUserHistory(){
-        File file = new File("userHistory/history_" + this.login +".txt");
+    public void readUserHistory() {
+        File file = new File("userHistory/history_" + this.login + ".txt");
 
         try {
             List<String> list = Files.readAllLines(file.toPath());
-           if (list.size() > 100){
-               for (int i = list.size() - 101; i < list.size(); i++) {
-                   this.sendMsg(list.get(i));
-               }
-           }else {
-               for (int i = 0; i < list.size(); i++) {
-                   this.sendMsg(list.get(i));
-               }
-           }
+            if (list.size() > 100) {
+                for (int i = list.size() - 101; i < list.size(); i++) {
+                    this.sendMsg(list.get(i));
+                }
+            } else {
+                for (int i = 0; i < list.size(); i++) {
+                    this.sendMsg(list.get(i));
+                }
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }

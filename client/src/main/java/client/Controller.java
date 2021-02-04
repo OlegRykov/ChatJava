@@ -17,7 +17,6 @@ import javafx.stage.StageStyle;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.net.Socket;
 import java.net.URL;
@@ -146,7 +145,7 @@ public class Controller implements Initializable {
                                 break;
                             }
 
-                            if (str.startsWith(Command.USER_NICKNAME)){
+                            if (str.startsWith(Command.USER_NICKNAME)) {
                                 String[] token = str.split("\\s");
                                 nickname = token[1];
                                 setTitle(nickname);
