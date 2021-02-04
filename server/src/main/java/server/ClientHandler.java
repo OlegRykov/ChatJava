@@ -4,6 +4,7 @@ import commands.Command;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.EOFException;
 import java.io.IOException;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
@@ -75,18 +76,33 @@ public class ClientHandler {
                     while (true) {
                         String str = in.readUTF();
 
+                        if (str.startsWith(Command.CHANGE_NICKNAME)) {
+                            String[] token = str.split("\\s");
+                            if (token.length < 4) {
+                                continue;
+                            }
+                            boolean chNicknameIsCompleted = server.getAuthService().changeNickname(token[1],
+                                    token[2], token[3]);
+                            if (chNicknameIsCompleted) {
+                                sendMsg(Command.CHANGE_NICKNAME_IS_COMPLETED);
+                                sendMsg(Command.USER_NICKNAME + " " + token[3]);
+                                nickname = token[3];
+                                server.broadcastClientList();
+                            } else {
+                                sendMsg(Command.CHANGE_NICKNAME_IS_NOT_COMPLETED);
+                            }
+                        }
+
                         if (str.equals(Command.END)) {
                             sendMsg(Command.END);
                             System.out.println("client disconnected");
                             break;
                         }
-
                         server.broadcastMsg(this, str);
                     }
-
                 } catch (RuntimeException e) {
                     System.out.println(e.getMessage());
-                }catch (SocketTimeoutException e){
+                } catch (SocketTimeoutException e) {
                     try {
                         out.writeUTF(Command.END);
                         System.out.println("Client disconnected");

@@ -33,12 +33,19 @@
                 <Button styleClass="bottomButton" text="login" onAction="#tryToAuth" minWidth="100"/>
                 <Button styleClass="bottomButton" text="registration" onAction="#registration" minWidth="100"/>
             </HBox>
-            <HBox fx:id="msgPanel" visible="false" managed="false">
-                <TextField styleClass="bottomPadding" fx:id="textField" HBox.hgrow="ALWAYS"
-                           promptText="Введите сообщение" onAction="#btnSend"/>
-                <Button styleClass="bottomButton" text="Send" prefWidth="150"
-                        onAction="#btnSend"/>
-            </HBox>
+            <VBox>
+                <HBox fx:id="chNickname" visible="false" managed="false">
+                    <Button styleClass="bottomButton" text="Change Nickname" onAction="#changeNickname"
+                            prefWidth="125" />
+                </HBox>
+                <HBox fx:id="msgPanel" visible="false" managed="false">
+                    <TextField styleClass="bottomPadding" fx:id="textField" HBox.hgrow="ALWAYS"
+                               promptText="Введите сообщение" onAction="#btnSend"/>
+                    <Button styleClass="bottomButton" text="Send" prefWidth="150"
+                            onAction="#btnSend"/>
+                </HBox>
+            </VBox>
+
         </VBox>
 
     </bottom>

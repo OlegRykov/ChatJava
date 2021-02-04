@@ -4,14 +4,11 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import commands.Command;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.Initializable;
-import javafx.scene.control.PasswordField;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
@@ -20,6 +17,7 @@ import javafx.stage.StageStyle;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.EOFException;
 import java.io.IOException;
 import java.net.Socket;
 import java.net.URL;
@@ -38,7 +36,12 @@ public class Controller implements Initializable {
     private Stage stage;
     private Stage regStage;
     private RegController regController;
+    private Stage chNickStage;
+    private ChNickController chNickController;
 
+
+    @FXML
+    public HBox chNickname;
     @FXML
     private ListView<String> clientList;
     @FXML
@@ -67,6 +70,8 @@ public class Controller implements Initializable {
 
     public void setAuthenticated(boolean authenticated) {
         this.authenticated = authenticated;
+        chNickname.setVisible(authenticated);
+        chNickname.setManaged(authenticated);
         msgPanel.setVisible(authenticated);
         msgPanel.setManaged(authenticated);
         clientList.setVisible(authenticated);
@@ -140,6 +145,20 @@ public class Controller implements Initializable {
                                 System.out.println("client disconnected");
                                 break;
                             }
+
+                            if (str.startsWith(Command.USER_NICKNAME)){
+                                String[] token = str.split("\\s");
+                                nickname = token[1];
+                                setTitle(nickname);
+                            }
+
+                            if (str.equals(Command.CHANGE_NICKNAME_IS_COMPLETED)) {
+                                chNickController.chNickIsCompleted();
+                            }
+                            if (str.equals(Command.CHANGE_NICKNAME_IS_NOT_COMPLETED)) {
+                                chNickController.chNickIsNotCompleted();
+                            }
+
                             if (str.startsWith(Command.CLIENT_LIST)) {
                                 String[] token = str.split("\\s");
                                 Platform.runLater(() -> {
@@ -247,5 +266,44 @@ public class Controller implements Initializable {
 
     public Stage getRegStage() {
         return regStage;
+    }
+
+    @FXML
+    public void changeNickname(ActionEvent actionEvent) {
+        if (chNickStage == null) {
+            createChNickWindow();
+
+        }
+        chNickStage.show();
+    }
+
+    private void createChNickWindow() {
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/changeNickname.fxml"));
+            Parent root = fxmlLoader.load();
+            chNickStage = new Stage();
+            chNickStage.setTitle("Chat change nickname");
+            chNickStage.setScene(new Scene(root, 400, 350));
+            chNickController = fxmlLoader.getController();
+            chNickController.setController(this);
+            chNickStage.initModality(Modality.APPLICATION_MODAL);
+            chNickStage.initStyle(StageStyle.UTILITY);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void tryToChNick(String currentNickname, String password, String newNickname) {
+        String msg = String.format("%s %s %s %s", Command.CHANGE_NICKNAME, currentNickname, password, newNickname);
+        try {
+            out.writeUTF(msg);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public Stage getChNickStage() {
+        return chNickStage;
     }
 }

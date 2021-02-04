@@ -17,7 +17,8 @@ public class Server {
 
     public Server() {
         clients = new CopyOnWriteArrayList<>();
-        authService = new SimpleAuthService();
+//        authService = new SimpleAuthService();
+        authService = new DataBaseAuthService();
 
         try {
             server = new ServerSocket(PORT);
@@ -43,8 +44,10 @@ public class Server {
     public void broadcastMsg(ClientHandler clientHandler, String msg) {
         String message = String.format("[ %s ]: %s", clientHandler.getNickname(), msg);
         for (ClientHandler c : clients) {
-            if (!msg.startsWith("/")) {
-                c.sendMsg(message);
+            if (msg.startsWith(Command.CHANGE_NICKNAME)){
+                System.out.println(msg);
+            }else if (!msg.startsWith("/")) {
+                    c.sendMsg(message);
             } else if (msg.startsWith(Command.PRIVATE_MESSAGE + " " + c.getNickname()) ||
                     c.getNickname().equals(clientHandler.getNickname())) {
                 String[] prMsg = msg.split("\\s", 3);
@@ -93,5 +96,4 @@ public class Server {
             c.sendMsg(msg);
         }
     }
-
 }
