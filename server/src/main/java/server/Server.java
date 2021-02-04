@@ -44,10 +44,10 @@ public class Server {
     public void broadcastMsg(ClientHandler clientHandler, String msg) {
         String message = String.format("[ %s ]: %s", clientHandler.getNickname(), msg);
         for (ClientHandler c : clients) {
-            if (msg.startsWith(Command.CHANGE_NICKNAME)){
+            if (msg.startsWith(Command.CHANGE_NICKNAME)) {
                 System.out.println(msg);
-            }else if (!msg.startsWith("/")) {
-                    c.sendMsg(message);
+            } else if (!msg.startsWith("/")) {
+                c.sendMsg(message);
             } else if (msg.startsWith(Command.PRIVATE_MESSAGE + " " + c.getNickname()) ||
                     c.getNickname().equals(clientHandler.getNickname())) {
                 String[] prMsg = msg.split("\\s", 3);

@@ -36,7 +36,7 @@
             <VBox>
                 <HBox fx:id="chNickname" visible="false" managed="false">
                     <Button styleClass="bottomButton" text="Change Nickname" onAction="#changeNickname"
-                            prefWidth="125" />
+                            prefWidth="125"/>
                 </HBox>
                 <HBox fx:id="msgPanel" visible="false" managed="false">
                     <TextField styleClass="bottomPadding" fx:id="textField" HBox.hgrow="ALWAYS"

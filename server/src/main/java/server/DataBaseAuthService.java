@@ -107,6 +107,7 @@ public class DataBaseAuthService implements AuthService {
         }
         return false;
     }
+
     public void insertChNickname() throws SQLException {
         psInsert = connection.prepareStatement("UPDATE users SET nickname = ? WHERE nickname = ?;");
     }
