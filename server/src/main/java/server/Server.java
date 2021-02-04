@@ -48,6 +48,7 @@ public class Server {
                 System.out.println(msg);
             } else if (!msg.startsWith("/")) {
                 c.sendMsg(message);
+                c.writeHistory(message);
             } else if (msg.startsWith(Command.PRIVATE_MESSAGE + " " + c.getNickname()) ||
                     c.getNickname().equals(clientHandler.getNickname())) {
                 String[] prMsg = msg.split("\\s", 3);
@@ -55,6 +56,7 @@ public class Server {
                 if (prMsg.length > 2) {
                     privateMassage = String.format("[ %s ]: %s", clientHandler.getNickname(), prMsg[2]);
                     c.sendMsg(privateMassage);
+                    c.writeHistory(privateMassage);
                 }
             }
         }

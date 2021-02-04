@@ -2,11 +2,11 @@ package server;
 
 import commands.Command;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
+import java.nio.file.Files;
+import java.util.List;
 
 public class ClientHandler {
     private Server server;
@@ -42,6 +42,7 @@ public class ClientHandler {
                                     System.out.println("client " + nickname + " connected "
                                             + socket.getRemoteSocketAddress());
                                     socket.setSoTimeout(0);
+                                    readUserHistory();
                                     break;
                                 } else {
                                     sendMsg("Этот логин уже используется.");
@@ -66,6 +67,7 @@ public class ClientHandler {
                                     token[2], token[3]);
                             if (registrationIsCompleted) {
                                 sendMsg(Command.REG_IS_COMPLETED);
+                                addClientHistory(token[1]);
                             } else {
                                 sendMsg(Command.REG_IS_NOT_COMPLETED);
                             }
@@ -74,6 +76,7 @@ public class ClientHandler {
 
                     while (true) {
                         String str = in.readUTF();
+
 
                         if (str.startsWith(Command.CHANGE_NICKNAME)) {
                             String[] token = str.split("\\s");
@@ -138,5 +141,44 @@ public class ClientHandler {
 
     public String getLogin() {
         return login;
+    }
+
+    public void addClientHistory(String login){
+        File file = new File("userHistory/history_" + login +".txt");
+        try {
+            file.createNewFile();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    public void writeHistory(String msg){
+        try {
+            FileWriter fileWriter = new FileWriter("userHistory/history_" + login +".txt", true);
+            fileWriter.write(msg + "\n");
+            fileWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void readUserHistory(){
+        File file = new File("userHistory/history_" + this.login +".txt");
+
+        try {
+            List<String> list = Files.readAllLines(file.toPath());
+           if (list.size() > 100){
+               for (int i = list.size() - 101; i < list.size(); i++) {
+                   this.sendMsg(list.get(i));
+               }
+           }else {
+               for (int i = 0; i < list.size(); i++) {
+                   this.sendMsg(list.get(i));
+               }
+           }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
