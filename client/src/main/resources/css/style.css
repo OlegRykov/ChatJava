@@ -17,7 +17,7 @@
     -fx-font-style: italic;
 }
 
-.bottomPadding{
+.bottomPadding {
     -fx-padding: 10px;
     -fx-border-insets:10px;
     -fx-background-insets: 10px;
@@ -26,6 +26,15 @@
     -fx-prompt-text-fill: #000000;
 }
 
-#buttonSendMessage: hover {
+.bottomButton {
+    -fx-padding: 10px;
+    -fx-border-insets:10px;
+    -fx-background-insets: 10px;
+    -fx-background-color:#CCAEFF;
+    -fx-text-fill: #000000;
+    -fx-prompt-text-fill: #000000;
+}
+
+.bottomButton: hover {
     -fx-background-color:#9677CA;
 }

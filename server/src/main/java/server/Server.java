@@ -17,7 +17,8 @@ public class Server {
 
     public Server() {
         clients = new CopyOnWriteArrayList<>();
-        authService = new SimpleAuthService();
+//        authService = new SimpleAuthService();
+        authService = new DataBaseAuthService();
 
         try {
             server = new ServerSocket(PORT);
@@ -43,8 +44,11 @@ public class Server {
     public void broadcastMsg(ClientHandler clientHandler, String msg) {
         String message = String.format("[ %s ]: %s", clientHandler.getNickname(), msg);
         for (ClientHandler c : clients) {
-            if (!msg.startsWith("/")) {
+            if (msg.startsWith(Command.CHANGE_NICKNAME)) {
+                System.out.println(msg);
+            } else if (!msg.startsWith("/")) {
                 c.sendMsg(message);
+                c.writeHistory(message);
             } else if (msg.startsWith(Command.PRIVATE_MESSAGE + " " + c.getNickname()) ||
                     c.getNickname().equals(clientHandler.getNickname())) {
                 String[] prMsg = msg.split("\\s", 3);
@@ -52,22 +56,46 @@ public class Server {
                 if (prMsg.length > 2) {
                     privateMassage = String.format("[ %s ]: %s", clientHandler.getNickname(), prMsg[2]);
                     c.sendMsg(privateMassage);
+                    c.writeHistory(privateMassage);
                 }
-            } else {
-                c.sendMsg(message);
             }
         }
     }
 
     void subscribe(ClientHandler clientHandler) {
         clients.add(clientHandler);
+        broadcastClientList();
     }
 
     void unsubscribe(ClientHandler clientHandler) {
         clients.remove(clientHandler);
+        broadcastClientList();
     }
 
     public AuthService getAuthService() {
         return authService;
+    }
+
+    public boolean isLoginAuthenticated(String login) {
+        for (ClientHandler c : clients) {
+            if (c.getLogin().equals(login)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void broadcastClientList() {
+        StringBuilder sb = new StringBuilder(Command.CLIENT_LIST);
+
+        for (ClientHandler c : clients) {
+            sb.append(" ").append(c.getNickname());
+        }
+
+        String msg = sb.toString();
+
+        for (ClientHandler c : clients) {
+            c.sendMsg(msg);
+        }
     }
 }
