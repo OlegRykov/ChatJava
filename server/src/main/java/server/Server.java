@@ -2,11 +2,15 @@ package server;
 
 import commands.Command;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.logging.Level;
+import java.util.logging.LogManager;
+import java.util.logging.Logger;
 
 public class Server {
     private ServerSocket server;
@@ -14,28 +18,37 @@ public class Server {
     private final int PORT = 8189;
     private List<ClientHandler> clients;
     private AuthService authService;
+    private final Logger logger = Logger.getLogger(Server.class.getName());
+    LogManager manager = LogManager.getLogManager();
 
     public Server() {
         clients = new CopyOnWriteArrayList<>();
 //        authService = new SimpleAuthService();
         authService = new DataBaseAuthService();
+        try {
+            manager.readConfiguration(new FileInputStream("logging.properties"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         try {
             server = new ServerSocket(PORT);
-            System.out.println("Server started");
+            logger.info("Server started");
 
             while (true) {
                 socket = server.accept();
-                System.out.println("Client connected");
+                logger.info("Client connected");
                 new ClientHandler(this, socket);
             }
 
         } catch (IOException e) {
+            logger.log(Level.SEVERE,"Произошла ошибка: ", e);
             e.printStackTrace();
         } finally {
             try {
                 server.close();
             } catch (IOException e) {
+                logger.log(Level.SEVERE,"Произошла ошибка: ", e);
                 e.printStackTrace();
             }
         }
@@ -45,8 +58,9 @@ public class Server {
         String message = String.format("[ %s ]: %s", clientHandler.getNickname(), msg);
         for (ClientHandler c : clients) {
             if (msg.startsWith(Command.CHANGE_NICKNAME)) {
-                System.out.println(msg);
+                logger.info(msg);
             } else if (!msg.startsWith("/")) {
+                logger.log(Level.FINE, msg);
                 c.sendMsg(message);
                 c.writeHistory(message);
             } else if (msg.startsWith(Command.PRIVATE_MESSAGE + " " + c.getNickname()) ||
@@ -97,5 +111,9 @@ public class Server {
         for (ClientHandler c : clients) {
             c.sendMsg(msg);
         }
+    }
+
+    public Logger getLogger() {
+        return logger;
     }
 }

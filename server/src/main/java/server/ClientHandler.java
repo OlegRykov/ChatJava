@@ -7,6 +7,7 @@ import java.net.Socket;
 import java.net.SocketTimeoutException;
 import java.nio.file.Files;
 import java.util.List;
+import java.util.logging.Level;
 
 public class ClientHandler {
     private Server server;
@@ -39,7 +40,7 @@ public class ClientHandler {
                                     nickname = newNick;
                                     sendMsg(Command.AUTH_OK + " " + nickname);
                                     server.subscribe(this);
-                                    System.out.println("client " + nickname + " connected "
+                                    server.getLogger().info("client " + nickname + " connected "
                                             + socket.getRemoteSocketAddress());
                                     socket.setSoTimeout(0);
                                     readUserHistory();
@@ -97,32 +98,37 @@ public class ClientHandler {
 
                         if (str.equals(Command.END)) {
                             sendMsg(Command.END);
-                            System.out.println("client disconnected");
+                            server.getLogger().info("client disconnected");
                             break;
                         }
                         server.broadcastMsg(this, str);
                     }
                 } catch (RuntimeException e) {
-                    System.out.println(e.getMessage());
+                    server.getLogger().log(Level.SEVERE,"Произошла ошибка: ", e);
                 } catch (SocketTimeoutException e) {
+                    server.getLogger().log(Level.SEVERE,"Произошла ошибка: ", e);
                     try {
                         out.writeUTF(Command.END);
                         System.out.println("Client disconnected");
                     } catch (IOException ioException) {
+                        server.getLogger().log(Level.SEVERE,"Произошла ошибка: ", e);
                         ioException.printStackTrace();
                     }
                 } catch (IOException e) {
+                    server.getLogger().log(Level.SEVERE,"Произошла ошибка: ", e);
                     e.printStackTrace();
                 } finally {
                     server.unsubscribe(this);
                     try {
                         socket.close();
                     } catch (IOException e) {
+                        server.getLogger().log(Level.SEVERE,"Произошла ошибка: ", e);
                         e.printStackTrace();
                     }
                 }
             }).start();
         } catch (IOException e) {
+            server.getLogger().log(Level.SEVERE,"Произошла ошибка: ", e);
             e.printStackTrace();
         }
     }
@@ -143,13 +149,9 @@ public class ClientHandler {
         return login;
     }
 
-    public void addClientHistory(String login) {
+    public void addClientHistory(String login) throws IOException {
         File file = new File("userHistory/history_" + login + ".txt");
-        try {
-            file.createNewFile();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        file.createNewFile();
     }
 
 
@@ -161,12 +163,11 @@ public class ClientHandler {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
     }
 
-    public void readUserHistory() {
+    public void readUserHistory() throws IOException {
         File file = new File("userHistory/history_" + this.login + ".txt");
-
-        try {
             List<String> list = Files.readAllLines(file.toPath());
             if (list.size() > 100) {
                 for (int i = list.size() - 101; i < list.size(); i++) {
@@ -177,8 +178,5 @@ public class ClientHandler {
                     this.sendMsg(list.get(i));
                 }
             }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 }
