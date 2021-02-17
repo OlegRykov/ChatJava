@@ -8,6 +8,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.logging.Level;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
@@ -41,11 +42,13 @@ public class Server {
             }
 
         } catch (IOException e) {
+            logger.log(Level.SEVERE,"Произошла ошибка: ", e);
             e.printStackTrace();
         } finally {
             try {
                 server.close();
             } catch (IOException e) {
+                logger.log(Level.SEVERE,"Произошла ошибка: ", e);
                 e.printStackTrace();
             }
         }
@@ -57,6 +60,7 @@ public class Server {
             if (msg.startsWith(Command.CHANGE_NICKNAME)) {
                 logger.info(msg);
             } else if (!msg.startsWith("/")) {
+                logger.log(Level.FINE, msg);
                 c.sendMsg(message);
                 c.writeHistory(message);
             } else if (msg.startsWith(Command.PRIVATE_MESSAGE + " " + c.getNickname()) ||

@@ -104,31 +104,31 @@ public class ClientHandler {
                         server.broadcastMsg(this, str);
                     }
                 } catch (RuntimeException e) {
-                    server.getLogger().log(Level.SEVERE,"Произошла ошибка: " + e.getMessage());
+                    server.getLogger().log(Level.SEVERE,"Произошла ошибка: ", e);
                 } catch (SocketTimeoutException e) {
-                    server.getLogger().log(Level.SEVERE,"Произошла ошибка: " + e.getMessage());
+                    server.getLogger().log(Level.SEVERE,"Произошла ошибка: ", e);
                     try {
                         out.writeUTF(Command.END);
                         System.out.println("Client disconnected");
                     } catch (IOException ioException) {
-                        server.getLogger().log(Level.SEVERE,"Произошла ошибка: " + e.getMessage());
+                        server.getLogger().log(Level.SEVERE,"Произошла ошибка: ", e);
                         ioException.printStackTrace();
                     }
                 } catch (IOException e) {
-                    server.getLogger().log(Level.SEVERE,"Произошла ошибка: " + e.getMessage());
+                    server.getLogger().log(Level.SEVERE,"Произошла ошибка: ", e);
                     e.printStackTrace();
                 } finally {
                     server.unsubscribe(this);
                     try {
                         socket.close();
                     } catch (IOException e) {
-                        server.getLogger().log(Level.SEVERE,"Произошла ошибка: " + e.getMessage());
+                        server.getLogger().log(Level.SEVERE,"Произошла ошибка: ", e);
                         e.printStackTrace();
                     }
                 }
             }).start();
         } catch (IOException e) {
-            server.getLogger().log(Level.SEVERE,"Произошла ошибка: " + e.getMessage());
+            server.getLogger().log(Level.SEVERE,"Произошла ошибка: ", e);
             e.printStackTrace();
         }
     }
